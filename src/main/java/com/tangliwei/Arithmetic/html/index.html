@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmetic Quiz Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px; /* 宽度变大 */
+            margin: 0 auto;
+            padding: 40px; /* 边距更大 */
+            background-color: white;
+            border-radius: 10px; /* 更圆滑的边角 */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            font-size: 36px; /* 标题更大 */
+        }
+        label {
+            font-weight: bold;
+            font-size: 20px; /* 标签字体增大 */
+        }
+        input[type="number"], input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 15px; /* 输入框更大 */
+            margin: 15px 0;
+            font-size: 18px; /* 输入框内字体更大 */
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 15px; /* 按钮更大 */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 22px; /* 按钮字体增大 */
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 30px; /* 更大的间距 */
+            padding: 20px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 18px; /* 输出结果字体更大 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Arithmetic Quiz Generator</h2>
+    <!-- 生成题目和答案 -->
+    <form id="quizForm">
+        <label for="numQuestions">Number of Questions:</label>
+        <input type="number" id="numQuestions" name="numQuestions" min="1" required>
+
+        <label for="range">Value Range (max):</label>
+        <input type="number" id="range" name="range" min="1" required>
+
+        <button type="submit">Generate and Download Files</button>
+    </form>
+
+    <!-- 上传题目和答案文件进行判题 -->
+    <form id="judgeForm" enctype="multipart/form-data">
+        <label for="exerciseFile">Upload Exercise File:</label>
+        <input type="file" id="exerciseFile" name="exerciseFile" accept=".txt" required>
+
+        <label for="answerFile">Upload Answer File:</label>
+        <input type="file" id="answerFile" name="answerFile" accept=".txt" required>
+
+        <button type="submit">Upload and Download Grading Results</button>
+    </form>
+
+    <div class="output" id="result">
+        <!-- 结果显示区域 -->
+    </div>
+</div>
+
+<script>
+    // 生成题目和答案文件，下载到本地
+    document.getElementById('quizForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 阻止表单默认提交
+
+        // 获取用户输入的题目个数和范围
+        const numQuestions = document.getElementById('numQuestions').value;
+        const range = document.getElementById('range').value;
+
+        // 将数据发送到后端，生成题目和答案
+        fetch('http://localhost:8081/generateQuiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                numQuestions: numQuestions,
+                range: range
+            })
+        })
+            .then(response => response.blob()) // 返回题目文件的二进制数据
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'Exercises.txt'; // 下载题目文件
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = `<strong>Error:</strong> ${error.message}`;
+            });
+    });
+
+    // 上传题目和答案文件，进行判题，并下载判题结果
+    document.getElementById('judgeForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 阻止表单默认提交
+
+        // 获取上传的文件
+        const exerciseFile = document.getElementById('exerciseFile').files[0];
+        const answerFile = document.getElementById('answerFile').files[0];
+
+        const formData = new FormData();
+        formData.append('exerciseFile', exerciseFile);
+        formData.append('answerFile', answerFile);
+
+        // 将文件发送到后端，进行判题
+        fetch('/judgeQuiz', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.blob()) // 返回判题结果文件的二进制数据
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'Grade.txt'; // 下载判题结果文件
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = `<strong>Error:</strong> ${error.message}`;
+            });
+    });
+</script>
+
+</body>
+</html>
