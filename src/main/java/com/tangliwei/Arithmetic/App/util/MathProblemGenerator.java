@@ -21,12 +21,12 @@ public class MathProblemGenerator {
     }
 
     // 生成唯一题目集合
-    private static Set<String> generateUniqueProblems(int numberOfProblems, int range) {
+    public static Set<String> generateUniqueProblems(int numberOfProblems, int range) {
         Set<String> problems = new LinkedHashSet<>();
         while (problems.size() < numberOfProblems) {
             String problem = generateRandomProblem(range);
             if (isValidExpression(problem)) {
-                problems.add(problem);
+                problems.add(FractionChange.convertExpressionToMixedFractions(problem));
             }
         }
         return problems;
@@ -36,13 +36,14 @@ public class MathProblemGenerator {
     private static String generateRandomProblem(int range) {
         String[] operators = {"+", "-", "*", "/"};
         StringBuilder problem = new StringBuilder();
+        Stack<Boolean> parenthesesStack = new Stack<>();
 
         // 生成操作数和运算符
         String operand1 = generateOperand(range);
         String operand2 = generateOperand(range);
         String operator = operators[RANDOM.nextInt(operators.length)];
 
-        // 确保减法时前面的数大于后面的数
+        // 确保减法时前面的数大于等于后面的数
         if ("-".equals(operator)) {
             while (evaluateOperand(operand1) < evaluateOperand(operand2)) {
                 operand1 = generateOperand(range);
@@ -50,20 +51,25 @@ public class MathProblemGenerator {
             }
         }
 
-        problem.append("(")
-                .append(operand1)
+        // 随机决定是否生成括号
+        if (RANDOM.nextBoolean()) {
+            problem.append("(");
+            parenthesesStack.push(true);  // 打开括号
+        }
+
+        problem.append(operand1)
                 .append(" ")
                 .append(operator)
                 .append(" ")
-                .append(operand2)
-                .append(")");
+                .append(operand2);
 
+        // 随机决定是否生成第二部分的表达式
         if (RANDOM.nextBoolean()) {
             operator = operators[RANDOM.nextInt(operators.length)];
             String operand3 = generateOperand(range);
             String operand4 = generateOperand(range);
 
-            // 确保减法时前面的数大于后面的数
+            // 确保减法时前面的数大于等于后面的数
             if ("-".equals(operator)) {
                 while (evaluateOperand(operand3) < evaluateOperand(operand4)) {
                     operand3 = generateOperand(range);
@@ -73,14 +79,33 @@ public class MathProblemGenerator {
 
             problem.append(" ")
                     .append(operator)
-                    .append(" (")
-                    .append(operand3)
+                    .append(" ");
+
+            // 随机决定是否给第二部分加括号
+            if (RANDOM.nextBoolean()) {
+                problem.append("(");
+                parenthesesStack.push(true);  // 打开括号
+            }
+
+            problem.append(operand3)
                     .append(" ")
                     .append(operators[RANDOM.nextInt(operators.length)])
                     .append(" ")
-                    .append(operand4)
-                    .append(")");
+                    .append(operand4);
+
+            // 关闭括号
+            while (!parenthesesStack.isEmpty()) {
+                problem.append(")");
+                parenthesesStack.pop();
+            }
         }
+
+        // 如果还有未关闭的括号，最后关闭它
+        while (!parenthesesStack.isEmpty()) {
+            problem.append(")");
+            parenthesesStack.pop();
+        }
+
         return problem.toString();
     }
 

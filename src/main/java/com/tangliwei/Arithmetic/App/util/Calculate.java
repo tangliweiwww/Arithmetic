@@ -12,10 +12,10 @@ import java.util.regex.Pattern;
 public class Calculate {
     public static void main(String[] args) {
         // 带分数的表达式字符串
-        String expression = "(4 + 10/3) / (7/10 / 10/1)";
+        String expression = "1/7 / 1 - 1'2/5 * 1";
 
         // 将带分数转化为普通分数再计算
-        String processedExpression = preprocessMixedFractions(expression);
+        String processedExpression = FractionChange.convertMixedFractionsToImproperFractions(expression);
         System.out.println("处理后的表达式: " + processedExpression);
 
         double result = calculateExpression(processedExpression);
@@ -92,117 +92,4 @@ public class Calculate {
     }
 }
 
-//    private static final String[] OPERATORS = {"+", "-", "*", "/"};
-//
-//    public static void main(String[] args) {
-//        String question = "(3 + 5) * 2 - (4 / 2)";
-//        int answer = calculateAnswer(question);
-//        System.out.println("Answer: " + answer);
-//    }
-//
-//    // 根据生成的算式计算答案，支持括号
-//    private static int calculateAnswer(String question) {
-//        // 将中缀表达式转换为后缀表达式
-//        String[] postfix = infixToPostfix(question);
-//        // 计算后缀表达式的结果
-//        return evaluatePostfix(postfix);
-//    }
-//
-//    // 将中缀表达式转换为后缀表达式 (逆波兰表达式)
-//    private static String[] infixToPostfix(String expression) {
-//        Stack<String> operatorStack = new Stack<>();
-//        StringBuilder output = new StringBuilder();
-//        String[] tokens = expression.split(" ");
-//
-//        for (String token : tokens) {
-//            if (isNumeric(token)) {
-//                // 如果是数字，直接输出
-//                output.append(token).append(" ");
-//            } else if (isOperator(token)) {
-//                // 如果是运算符，处理栈中的运算符，确保正确的优先级顺序
-//                while (!operatorStack.isEmpty() && precedence(operatorStack.peek()) >= precedence(token)) {
-//                    output.append(operatorStack.pop()).append(" ");
-//                }
-//                operatorStack.push(token);
-//            } else if (token.equals("(")) {
-//                // 左括号直接入栈
-//                operatorStack.push(token);
-//            } else if (token.equals(")")) {
-//                // 右括号，弹出运算符直到遇到左括号
-//                while (!operatorStack.isEmpty() && !operatorStack.peek().equals("(")) {
-//                    output.append(operatorStack.pop()).append(" ");
-//                }
-//                operatorStack.pop(); // 弹出左括号
-//            }
-//        }
-//
-//        // 弹出栈中剩余的运算符
-//        while (!operatorStack.isEmpty()) {
-//            output.append(operatorStack.pop()).append(" ");
-//        }
-//
-//        return output.toString().split(" ");
-//    }
-//
-//    // 计算后缀表达式的结果
-//    private static int evaluatePostfix(String[] postfix) {
-//        Stack<Integer> stack = new Stack<>();
-//
-//        for (String token : postfix) {
-//            if (isNumeric(token)) {
-//                stack.push(Integer.parseInt(token));
-//            } else if (isOperator(token)) {
-//                int rightOperand = stack.pop();
-//                int leftOperand = stack.pop();
-//                stack.push(calculate(leftOperand, rightOperand, token));
-//            }
-//        }
-//
-//        return stack.pop();
-//    }
-//
-//    // 判断是否为数字
-//    private static boolean isNumeric(String token) {
-//        try {
-//            Integer.parseInt(token);
-//            return true;
-//        } catch (NumberFormatException e) {
-//            return false;
-//        }
-//    }
-//
-//    // 判断是否为运算符
-//    private static boolean isOperator(String token) {
-//        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
-//    }
-//
-//    // 运算符的优先级
-//    private static int precedence(String operator) {
-//        switch (operator) {
-//            case "+":
-//            case "-":
-//                return 1;
-//            case "*":
-//            case "/":
-//                return 2;
-//            default:
-//                return 0;
-//        }
-//    }
-//
-//    // 执行四则运算
-//    private static int calculate(int leftOperand, int rightOperand, String operator) {
-//        switch (operator) {
-//            case "+":
-//                return leftOperand + rightOperand;
-//            case "-":
-//                return leftOperand - rightOperand;
-//            case "*":
-//                return leftOperand * rightOperand;
-//            case "/":
-//                return leftOperand / rightOperand; // 整除，注意处理真分数时需调整
-//            default:
-//                throw new IllegalArgumentException("Unsupported operator: " + operator);
-//        }
-//    }
 
