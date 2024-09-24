@@ -7,7 +7,7 @@ import java.util.*;
 public class FractionCalculator {
 
     public static void main(String[] args) {
-        String expression = "2 * 11/3 * 10 * 6";
+        String expression = "(2 *1'1/3 * 10 * 6 )";
         try {
             BigFraction result = evaluateFractionExpression(expression);
             System.out.println("结果是: " + result);

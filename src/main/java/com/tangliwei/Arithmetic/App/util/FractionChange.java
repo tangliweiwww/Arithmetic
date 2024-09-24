@@ -17,7 +17,7 @@ public class FractionChange {
 //        System.out.println("Converted expression: " + result);
 
         // 示例带分数转换为普通分数
-        String mixedFraction = "73/20";
+        String mixedFraction = "73/20+ 1";
         String improperFraction = convertExpressionToMixedFractions(mixedFraction);
         System.out.println("Mixed fraction: " + mixedFraction);
         System.out.println("Improper fraction: " + improperFraction);
