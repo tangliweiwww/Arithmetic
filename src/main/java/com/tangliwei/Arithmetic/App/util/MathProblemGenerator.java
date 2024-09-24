@@ -1,5 +1,10 @@
 package com.tangliwei.Arithmetic.App.util;
 
+
+import org.apache.commons.math3.fraction.BigFraction;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+
 import java.util.*;
 
 public class MathProblemGenerator {
@@ -134,8 +139,12 @@ public class MathProblemGenerator {
 
     // 检查计算结果是否符合要求
     private static boolean isValidExpression(String expression) {
-        // 这里可以实现一个表达式求值和验证的逻辑
-        // 例如，使用一个简单的数学表达式求值库或自己实现求值算法
+        // 创建表达式解析器
+        Expression e = new ExpressionBuilder(expression).build();
+        // 计算并返回结果
+        double result = e.evaluate();
+        // 将结果转换为BigFraction
+        if (result < 0){return false;}
         return true;
     }
 }

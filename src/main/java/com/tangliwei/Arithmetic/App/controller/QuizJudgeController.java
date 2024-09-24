@@ -1,6 +1,7 @@
 package com.tangliwei.Arithmetic.App.controller;
 
 import com.tangliwei.Arithmetic.App.Judge;
+import com.tangliwei.Arithmetic.App.bean.ErrorDetails;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -42,10 +43,8 @@ public class QuizJudgeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    private void processFiles(MultipartFile exerciseFile, MultipartFile answerFile, String resultFilePath) {
-        // 处理判题逻辑，并将结果写入 resultFilePath 文件中
-        // ...
-    }
 }
+
+
+
 
